@@ -12,6 +12,10 @@ body {
     margin-bottom: 1rem;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 #form {
     background: rgba(0, 0, 0, 0.15);
     padding: 0.25rem;

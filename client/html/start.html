@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div class="text-align-center">
+    <div id="mainContent" class="text-align-center">
         <h1>Create a Room</h1>
 
         <div class="margin-bottom-sm">
@@ -18,8 +18,18 @@
             <label>Room Name:</label>
             <input id="roomNameInput">
         </div>
+        <button onclick="createRoom()">Create</button>
 
-        <button onclick="createRoom()">Join</button>
+        <h1>Join an Existing Room</h1>
+        <div class="margin-bottom-sm">
+            <label>Your Name:</label>
+            <input id="userNameInputJoin">
+        </div>
+        <div class="margin-bottom-sm">
+            <label>Room ID:</label>
+            <input id="roomId">
+        </div>
+        <button onclick="joinRoom()">Join</button>
     </div>
 
     <script src="../scripts/start_script.js"></script>

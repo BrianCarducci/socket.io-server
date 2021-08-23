@@ -7,8 +7,10 @@ const cookieParser = require('cookie-parser');
 
 
 let pendingRooms = [];
+let rooms = [];
 module.exports = {
-    pendingRooms
+    pendingRooms,
+    rooms
 };
 
 app.use(express.json());
@@ -18,22 +20,22 @@ app.use(cookieParser());
 
 const io = new Server(httpServer);
 
-let rooms = [
-    {
-        room: {
-            id: '',
-            host: '',
-            members: ['', ''],
-            messages: [
-                {
-                    author: '',
-                    message: '',
-                    timeStamp: ''
-                }
-            ]
-        }
-    }
-];
+// let rooms = [
+//     {
+//         room: {
+//             id: '',
+//             host: '',
+//             members: ['', ''],
+//             messages: [
+//                 {
+//                     author: '',
+//                     message: '',
+//                     timeStamp: ''
+//                 }
+//             ]
+//         }
+//     }
+// ];
 
 io.on('connection', (socket) => {
     socket.emit('populate existing messages', messages);

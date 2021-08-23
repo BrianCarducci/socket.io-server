@@ -1,11 +1,13 @@
 const errorEl = document.createElement('p');
-errorEl.textContent('An Error Occurred');
+errorEl.textContent = 'An Error Occurred';
 errorEl.style.color = 'red';
 errorEl.id = 'errorEl';
 
 
 async function roomSetup() {
-    document.removeChild(errorEl);
+    try {
+        document.getElementById('mainContent').removeChild(errorEl);
+    } catch { }
     const hostName = document.getElementById('hostNameInput').value;
     const roomName = document.getElementById('roomNameInput').value;
 
@@ -35,11 +37,18 @@ async function roomSetup() {
 
         const createRoomButton = document.createElement('button');
         createRoomButton.textContent = 'Create Room';
-        createRoomButton.onclick = () => {
-            fetch('/createRoom', {
+        createRoomButton.onclick = async () => {
+            res = await fetch('/createRoom', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    hostName,
+                    roomId: resBody.roomId
+                })
             });
+            if (!res.ok) {
+                content.appendChild(errorEl)
+            }
         }
 
         content.appendChild(roomReadyHeaderEl);
@@ -52,6 +61,10 @@ async function roomSetup() {
 
 
 async function joinRoom() {
+    try {
+        document.getElementById('mainContent').removeChild(errorEl);
+    } catch { }
+
     const userName = document.getElementById('userNameInputJoin').value;
     const roomId = document.getElementById('roomIdInputJoin').value;
 
@@ -63,8 +76,9 @@ async function joinRoom() {
             roomId
         })
     });
+
     if (!res.ok) {
-        document.append(errorEl);
+        document.getElementById('mainContent').append(errorEl)
     }
 }
 

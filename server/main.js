@@ -13,31 +13,28 @@ module.exports = {
 };
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(require('./routes'));
 app.use(express.static('client'));
-app.use(cookieParser());
+
 
 const io = new Server(httpServer);
 
-// let rooms = [
-//     {
-//         room: {
-//             id: '',
-//             host: '',
-//             members: ['', ''],
-//             messages: [
-//                 {
-//                     author: '',
-//                     message: '',
-//                     timeStamp: ''
-//                 }
-//             ]
-//         }
-//     }
-// ];
-
 io.on('connection', (socket) => {
-    socket.emit('populate existing messages', messages);
+
+    socket.on('join room', (payload) => {
+        const room = rooms.find(room => room.roomId === payload.roomId);
+        if (room && payload.userId) {
+            rooms = rooms.map(room => {
+                if (room.roomId === payload.roomId) {
+                    room.members.push(payload.userId);
+                }
+            });
+            socket.emit('join room success', room.messages);
+        } else {
+            socket.emit('error', 'Failed to join room');
+        }
+    });
 
     socket.on('chat message', (msg) => {
         messages.push(msg);
@@ -51,6 +48,4 @@ io.on('connection', (socket) => {
 
 
 httpServer.listen(3000, () => console.log('listening on *:3000'));
-
-
 

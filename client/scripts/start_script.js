@@ -1,5 +1,5 @@
 const errorEl = document.createElement('p');
-errorEl.textContent = 'An Error Occurred. Try creating/joining a new room.';
+errorEl.textContent = 'An error occurred. Try joining or creating a different room.';
 errorEl.style.color = 'red';
 errorEl.id = 'errorEl';
 
@@ -73,7 +73,7 @@ async function joinRoom() {
     const userId = document.getElementById('userIdInputJoin').value;
     const roomId = document.getElementById('roomIdInputJoin').value;
 
-    const res = await fetch('/joinRoom', {
+    const joinRoomResponse = await fetch('/joinRoom', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -82,8 +82,9 @@ async function joinRoom() {
         })
     });
 
-    if (!res.ok) {
+    if (joinRoomResponse.ok) {
+        window.location.replace(`${window.location.href}room`);
+    } else {
         document.getElementById('mainContent').append(errorEl)
     }
 }
-

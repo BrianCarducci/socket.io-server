@@ -30,7 +30,7 @@ app.post('/createRoom', (req, res, next) => {
             members: [req.body.userId],
             messages: [{
                 author: req.body.userId,
-                timeStamp: new Date(),
+                timestamp: new Date(),
                 content: 'This is a test message'
             }]
         });

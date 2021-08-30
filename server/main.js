@@ -19,33 +19,38 @@ app.use(express.static('client'));
 
 
 const io = new Server(httpServer);
-
 io.on('connection', (socket) => {
 
     socket.on('join room', (payload) => {
-        const room = rooms.find(room => room.roomId === payload.roomId);
-        if (room && payload.userId) {
-            rooms = rooms.map(room => {
-                if (room.roomId === payload.roomId) {
-                    room.members.push(payload.userId);
-                }
-            });
-            socket.emit('join room success', room.messages);
+        const roomIndex = rooms.findIndex(room => room.roomId === payload.roomId);
+        if (roomIndex > -1 && payload.userId) {
+            rooms[roomIndex].members.push(payload.userId);
+            socket.join(rooms[roomIndex].roomId);
+            socket.emit('join room success', rooms[roomIndex].messages);
         } else {
             socket.emit('error', 'Failed to join room');
         }
     });
 
-    socket.on('chat message', (msg) => {
-        messages.push(msg);
-        io.emit('chat message', msg);
+    socket.on('chat message', (message) => {
+        const roomIndex = rooms.findIndex(room => room.roomId === message.roomId);
+        if (roomIndex > -1) {
+            console.log('room found')
+            rooms[roomIndex].messages.push({
+                author: message.author,
+                timestamp: new Date(),
+                content: message.content
+            });
+            io.to(message.roomId).emit('chat message', message);
+        } else {
+            socket.emit('disconnect');
+        }
     });
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+
     });
 });
 
 
 httpServer.listen(3000, () => console.log('listening on *:3000'));
-

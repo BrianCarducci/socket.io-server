@@ -25,8 +25,8 @@ app.post('/createRoom', (req, res, next) => {
         res.json({ result: 'Successfully created room' });
         pendingRooms = pendingRooms.filter(room => room.roomId !== req.cookies.roomId);
         rooms.push({
-            roomId: req.cookies.roomId,
-            hostName: req.body.userId,
+            id: req.cookies.roomId,
+            hostId: req.body.userId,
             members: [req.body.userId],
             messages: [{
                 author: req.body.userId,

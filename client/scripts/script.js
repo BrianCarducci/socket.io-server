@@ -1,4 +1,4 @@
-//setup
+// setup
 const socket = io();
 const messagesEl = document.getElementById('messages');
 const { roomId, userId } = checkCookies();
@@ -9,7 +9,7 @@ chatForm.addEventListener('submit', (e) => {
     if (chatInput.value) {
         socket.emit('chat message', {
             roomId,
-            author: userId,
+            authorId: userId,
             content: chatInput.value
         });
         chatInput.value = '';
@@ -17,12 +17,18 @@ chatForm.addEventListener('submit', (e) => {
 });
 
 
-//socket recieving events
+// socket recieving events
 socket.on('join room success', messages =>
     messages.forEach(message => appendMessage(message))
 );
+socket.on('join room error', err =>
+    window.location.replace(window.location.href.split('/room')[0])
+);
 socket.on('chat message', message =>
     appendMessage(message)
+);
+socket.on('chat message error', message =>
+    window.location.replace(window.location.href.split('/room')[0])
 );
 socket.on('disconnect', () => {
     window.location.replace(window.location.href);
@@ -47,10 +53,11 @@ function checkCookies() {
 }
 
 function appendMessage(message) {
+    console.log(message)
     const messageListItem = document.createElement('li');
 
     const authorEl = document.createElement('b');
-    authorEl.textContent = `${message.author} (${message.timestamp}): `;
+    authorEl.textContent = `${message.authorId} (${message.timestamp}): `;
 
     const messageContentEl = document.createElement('p');
     messageContentEl.textContent = message.content;

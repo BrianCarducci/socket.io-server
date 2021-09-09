@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 
 app.post('/roomSetup', (req, res) => {
     const roomId = randomUUID();
-    roomsState.pendingRooms.push({ roomId, roomName: req.body.roomName, hostId: req.body.userId, memberIds: [], messages: [] });
+    roomsState.pendingRooms.push({ roomId, roomName: req.body.roomName, hostId: req.body.userId, members: [], messages: [] });
     res.cookie('roomId', roomId);
     res.json({ roomId, hostName: req.body.userId });
 });
@@ -26,7 +26,7 @@ app.post('/createRoom', (req, res, next) => {
             roomId: req.cookies.roomId,
             roomName: roomsState.pendingRooms[pendingRoomIndex].roomName,
             hostId: req.body.userId,
-            memberIds: [req.body.userId],
+            members: [],
             messages: [{
                 authorId: req.body.userId,
                 timestamp: new Date(),

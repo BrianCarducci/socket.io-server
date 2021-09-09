@@ -9,12 +9,12 @@ import { RoomsState } from './model/Room';
 import { socketSetup } from './socket';
 
 
+export const roomsState = new RoomsState();
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(require('./routes'));
 app.use(express.static('client'));
-
-export const roomsState = new RoomsState();
 
 socketSetup(httpServer);
 

@@ -1,7 +1,11 @@
 // setup
+const { roomId, userId } = getCookies();
+
 const socket = io();
+socket.emit('join room', { roomId, userId });
+
 const messagesEl = document.getElementById('messages');
-const { roomId, userId } = checkCookies();
+
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 chatForm.addEventListener('submit', (e) => {
@@ -36,18 +40,13 @@ socket.on('disconnect', () => {
 
 
 // function definitions
-function checkCookies() {
-    try {
-        const roomId = document.cookie.split('; ').find(row => row.startsWith('roomId=')).split('=')[1];
-        const userId = document.cookie.split('; ').find(row => row.startsWith('userId=')).split('=')[1];
+function getCookies() {
+    const roomId = document.cookie.split('; ').find(row => row.startsWith('roomId=')).split('=')[1];
+    const userId = document.cookie.split('; ').find(row => row.startsWith('userId=')).split('=')[1];
 
-        if (roomId && userId) {
-            socket.emit('join room', { roomId, userId });
-            return { roomId, userId };
-        } else {
-            throw new Error();
-        }
-    } catch {
+    if (roomId && userId) {
+        return { roomId, userId };
+    } else {
         window.location.replace(window.location.href.split('/room')[0]);
     }
 }

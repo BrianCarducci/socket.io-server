@@ -1,10 +1,11 @@
+import { Member } from './Member';
 import { Message } from './Message';
 
 interface Room {
     roomId: string;
     roomName: string;
     hostId: string;
-    memberIds: string[];
+    members: Member[];
     messages: Message[];
 }
 

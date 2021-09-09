@@ -4,12 +4,11 @@ import { roomsState } from './main';
 
 export function socketSetup(httpServer: http.Server) {
     const io = new Server(httpServer);
-    io.on('connection', (socket) => {
+    io.on('connection', socket => {
         socket.on('join room', (payload) => {
-            console.log('join room')
             const roomIndex = roomsState.rooms.findIndex(room => room.roomId === payload.roomId);
             if (roomIndex > -1 && payload.userId) {
-                roomsState.rooms[roomIndex].memberIds.push(payload.userId);
+                roomsState.rooms[roomIndex].members.push({ memberId: payload.userId, socket });
                 socket.join(roomsState.rooms[roomIndex].roomId);
                 socket.emit('join room success', roomsState.rooms[roomIndex].messages);
             } else {
@@ -33,7 +32,12 @@ export function socketSetup(httpServer: http.Server) {
         });
 
         socket.on('disconnect', () => {
-
+            const roomIndex = roomsState.rooms.findIndex(room => room.members.some(member => member.socket === socket));
+            const memberIndex = roomsState.rooms[roomIndex].members.findIndex(member => member.socket === socket);
+            roomsState.rooms[roomIndex].members.splice(memberIndex, 1);
+            if (!roomsState.rooms[roomIndex].members.length) {
+                roomsState.rooms.splice(roomIndex, 1);
+            }
         });
     });
 }

@@ -1,23 +1,32 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 let app = module.exports = express();
 
 import path from 'path';
 import { randomUUID } from 'crypto';
 import { roomsState } from './main';
+import { RoomSetupRequest } from './dto/request-bodies';
+import { RoomSetupResponse } from './dto/response-bodies';
 
 
-app.get('/', (req, res) => {
+app.get('/', (res: Response) => {
     res.clearCookie('roomId');
     res.clearCookie('userId');
     res.sendFile(path.resolve('client/html/start.html'));
 });
 
-app.post('/roomSetup', (req, res) => {
-    const roomId = randomUUID();
-    roomsState.pendingRooms.push({ roomId, roomName: req.body.roomName, hostId: req.body.userId, members: [], messages: [] });
-    res.cookie('roomId', roomId);
-    res.json({ roomId, hostName: req.body.userId });
-});
+
+app.post(
+    '/roomSetup',
+    (
+        req: Request<any, any, RoomSetupRequest>,
+        res: Response<RoomSetupResponse>
+    ) => {
+        const roomId = randomUUID();
+        roomsState.pendingRooms.push({ roomId, roomName: req.body.roomName, hostId: req.body.userId, members: [], messages: [] });
+        res.cookie('roomId', roomId);
+        res.json({ roomId, hostId: req.body.userId });
+    }
+);
 
 app.post('/createRoom', (req, res, next) => {
     const pendingRoomIndex = roomsState.pendingRooms.findIndex(room => room.roomId === req.cookies.roomId);
@@ -41,7 +50,7 @@ app.post('/createRoom', (req, res, next) => {
     }
 });
 
-app.get('/room', (req, res) => {
+app.get('/room', (res: Response) => {
     res.sendFile(path.resolve('client/html/chat.html'));
 });
 

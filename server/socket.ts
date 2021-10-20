@@ -1,6 +1,7 @@
 import http from 'http';
 import { Server } from 'socket.io';
 import { roomsState } from './main';
+import { Message } from './model/Message';
 
 export function socketSetup(httpServer: http.Server) {
     const io = new Server(httpServer);
@@ -19,7 +20,7 @@ export function socketSetup(httpServer: http.Server) {
         socket.on('chat message', (message) => {
             const roomIndex = roomsState.rooms.findIndex(room => room.roomId === message.roomId);
             if (roomIndex > -1) {
-                const newMessage = {
+                const newMessage: Message = {
                     authorId: message.authorId,
                     timestamp: new Date(),
                     content: message.content
